@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, field_validator, model_validator, computed_field
+from pydantic import BaseModel, Field, field_validator, model_validator, computed_field, ConfigDict
 from typing import Optional, Literal
 
 
@@ -7,6 +7,13 @@ class Category(BaseModel):  # Pydantic Model that validates the data
 
 
 class Model(BaseModel):
+    model_config = ConfigDict(
+        extra='ignore',  # Extra fields
+        frozen=True,  # Frozen Model -> Once the model/object created, it cannot be updated
+        strict=True, #Stricting pydantic model
+        validate_assignment=True #validate on edit on the model
+    )
+
     # Field: Value Type
     id: int
     name: str = Field(..., min_length=3, max_length=50,
@@ -40,14 +47,16 @@ class Model(BaseModel):
         return round(self.price * 1.05, 2)
 
 
-item = Model(id=1, name="PaNeER tiKka", price=12,category=Category(name='main course'))
+item = Model(id=1, name="PaNeER tiKka", price=12,
+             category=Category(name='main course'), spicy='teekha hai bhaiya..')
 
-print(item) # needs to be converted to dictionary to be able to send to other inside project functions...
+# needs to be converted to dictionary to be able to send to other inside project functions...
+print(item)
 
 # model_dump() -> converts object into dictionary but works only in inside python project files
 print('\nDictionary Model Dump')
 print(item.model_dump())
 
-#model_dump_json() -> to send object over the internet or the websites, out of PYTHON
+# model_dump_json() -> to send object over the internet or the websites, out of PYTHON
 print('\nJson Model Dump')
 print(item.model_dump_json())
