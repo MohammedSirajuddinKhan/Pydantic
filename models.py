@@ -40,8 +40,14 @@ class Model(BaseModel):
         return round(self.price * 1.05, 2)
 
 
-item = Model(id=1,
-             name="paneer TIKKA",
-             price=12,
-             category=Category(name='main course'))
-print(item)
+item = Model(id=1, name="PaNeER tiKka", price=12,category=Category(name='main course'))
+
+print(item) # needs to be converted to dictionary to be able to send to other inside project functions...
+
+# model_dump() -> converts object into dictionary but works only in inside python project files
+print('\nDictionary Model Dump')
+print(item.model_dump())
+
+#model_dump_json() -> to send object over the internet or the websites, out of PYTHON
+print('\nJson Model Dump')
+print(item.model_dump_json())
