@@ -1,5 +1,6 @@
-from pydantic import BaseModel, Field, field_validator, model_validator, computed_field, ConfigDict
+from pydantic import BaseModel, Field, field_validator, model_validator, computed_field, ConfigDict, EmailStr, AnyUrl
 from typing import Optional, Literal
+from datetime import date
 
 
 class Category(BaseModel):  # Pydantic Model that validates the data
@@ -10,8 +11,8 @@ class Model(BaseModel):
     model_config = ConfigDict(
         extra='ignore',  # Extra fields
         frozen=True,  # Frozen Model -> Once the model/object created, it cannot be updated
-        strict=True, #Stricting pydantic model
-        validate_assignment=True #validate on edit on the model
+        strict=True,  # Stricting pydantic model
+        validate_assignment=True  # validate on edit on the model
     )
 
     # Field: Value Type
@@ -22,12 +23,15 @@ class Model(BaseModel):
     category: Category = Field(..., description="Item Category")
     # It is okay if nothing comes in this
     is_available: bool = Field(default=True)
-    description: Optional[str] = "Optional"
+    description: Optional[str] = "Optional"  # Optional Field
+    email: EmailStr  # Valid Email
+    url: AnyUrl # valid URL
+    date: date # valid date format is followed or not
 
-    # Optional Field
     # Types of custom validators
 
     #   Field Validator -> Only for one field
+
     @field_validator('name')
     @classmethod
     def title_name(cls, value):
