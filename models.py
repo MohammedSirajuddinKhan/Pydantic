@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator, model_validator, computed_field
 from typing import Optional, Literal
 
 
@@ -15,11 +15,33 @@ class Model(BaseModel):
     category: Category = Field(..., description="Item Category")
     # It is okay if nothing comes in this
     is_available: bool = Field(default=True)
-    description: Optional[str] = "Optional"  # Optional Field
+    description: Optional[str] = "Optional"
+
+    # Optional Field
+    # Types of custom validators
+
+    #   Field Validator -> Only for one field
+    @field_validator('name')
+    @classmethod
+    def title_name(cls, value):
+        return value.title()
+
+    #   Model Validator -> Multiple fields
+    @model_validator(mode='after')
+    def check_available(self):
+        if self.is_available and self.price <= 0:
+            raise ('Available item must have price greater than 0')
+        return self
+
+    #   Computed Field ->
+    @computed_field
+    @property
+    def price_tax(self) -> float:
+        return round(self.price * 1.05, 2)
 
 
 item = Model(id=1,
-             name="Starter",
-             price=20.98,
-             category=Category(name='starter'), is_available=True)
+             name="paneer TIKKA",
+             price=12,
+             category=Category(name='main course'))
 print(item)
